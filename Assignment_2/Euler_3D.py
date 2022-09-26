@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import time
 
 def escape_velocity(r):
     v_mag = np.sqrt((2*G*M)/(np.linalg.norm(r)))
     return v_mag
-
+start_time = time.time()
 # mass, spring constant, initial position and velocity
 m = 1.0
 G = 6.6743E-11
@@ -30,7 +30,7 @@ v_list = [v, ]
 
 # Kepler's Law gives an equation for time period for elliptical orbit
 T = np.sqrt(4 * (np.pi ** 2) * (r_mag ** 3) / (G * M))
-t_max = 3*T
+t_max = 1000 # 3*T
 dt = 0.1
 t_array = np.arange(0, t_max, dt)
 
@@ -45,17 +45,18 @@ for i in range(len(t_array)):
 
 r_array = np.array(r_list)
 v_array = np.array(v_list)
-
-fig = plt.figure(111, figsize=(4, 4))
+print(time.time()-start_time)
+#
+# fig = plt.figure(111, figsize=(4, 4))
+# # ax = fig.add_subplot(111)
+# # # ax.plot(t_array, r_array[:, 2] - R_mars)
+# # ax.set_title('Altitude of Orbit (for straight-down descent)')
+# # ax.set_xlabel('Time (s)')
+# # ax.set_ylabel('R_z (m)')
+#
 # ax = fig.add_subplot(111)
-# # ax.plot(t_array, r_array[:, 2] - R_mars)
-# ax.set_title('Altitude of Orbit (for straight-down descent)')
-# ax.set_xlabel('Time (s)')
-# ax.set_ylabel('R_z (m)')
-
-ax = fig.add_subplot(111)
-ax.plot(r_array[:,0], r_array[:, 2])
-ax.plot(0,0, marker = 'o')
-ax.set_title('Plot in orbital plane')
-ax.axis('equal')
-plt.show()
+# ax.plot(r_array[:,0], r_array[:, 2])
+# ax.plot(0,0, marker = 'o')
+# ax.set_title('Plot in orbital plane')
+# ax.axis('equal')
+# plt.show()

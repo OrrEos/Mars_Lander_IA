@@ -11,7 +11,7 @@ v = 1
 
 # simulation time, timestep and time
 t_max = 100
-dt = 0.1
+dt = 0.00001
 t_array = np.arange(0, t_max, dt)
 
 # initialise empty lists to record trajectories
@@ -35,11 +35,11 @@ x_array = np.array(x_list)
 v_array = np.array(v_list)
 
 # plot the position-time graph
-plt.figure(1)
-plt.clf()
-plt.xlabel('time (s)')
-plt.grid()
-plt.plot(t_array, x_array, label='x (m)')
-plt.plot(t_array, v_array, label='v (m/s)')
-plt.legend()
-plt.show()
+#plt.figure(1)
+#plt.clf()
+#plt.xlabel('time (s)')
+#plt.grid()
+#plt.plot(t_array, x_array, label='x (m)')
+#plt.plot(t_array, v_array, label='v (m/s)')
+#plt.legend()
+#plt.show()
