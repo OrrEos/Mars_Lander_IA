@@ -25,7 +25,44 @@ void numerical_dynamics (void)
   // lander's pose. The time step is delta_t (global variable).
 {
   // INSERT YOUR CODE HERE
+  vector3d acc, force, f_grav, f_thrust, f_drag; // local acceleration variable
+  static vector3d prev_position, new_position;
+  double object_mass, density, frontal_area;
+  
+  density = atmospheric_density(position);
+  frontal_area = 3.14159 * LANDER_SIZE*LANDER_SIZE; //pi*r^2
+  object_mass = UNLOADED_LANDER_MASS + fuel*FUEL_DENSITY*FUEL_CAPACITY;
+  f_grav = - GRAVITY * MARS_MASS * (object_mass) * position / (position.abs()*position.abs()* position.abs());
+  f_thrust = thrust_wrt_world();
+  if (parachute_status == NOT_DEPLOYED || parachute_status == LOST) { // either or
+    f_drag = -velocity * 0.5 * density * (DRAG_COEF_LANDER)*frontal_area * (velocity.abs());
+}
+  else {
+    f_drag = -velocity * 0.5 * density * (DRAG_COEF_LANDER)*frontal_area * (velocity.abs())
+            - velocity * 0.5 * density * (DRAG_COEF_CHUTE) * 4 * frontal_area * (velocity.abs()); // I set parachute's frontal area to be four times that of the lander
+}
+  force = f_grav + f_thrust + f_drag;
+  acc = force / object_mass;
+  
+  // use Euler for first integration step and Verlet otherwise
+  if (simulation_time == 0.0){
+    // Euler Integrator
+    prev_position = position;
+    new_position = position + delta_t * velocity;
+    velocity = velocity + delta_t * acc;
+  }
+  else{
+    // Verlet Integrator
+    new_position = 2*position - prev_position + acc * delta_t* delta_t;
+    velocity = 1/(2*delta_t) * (new_position - prev_position);
+    // update previous position:
+    prev_position = position;
+  }
+  position = new_position;
 
+
+  
+  
   // Here we can apply an autopilot to adjust the thrust, parachute and attitude
   if (autopilot_enabled) autopilot();
 

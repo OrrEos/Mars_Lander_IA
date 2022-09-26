@@ -31,7 +31,7 @@
 		71994AA728E0E3D1001E15B4 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		71994AA928E0E447001E15B4 /* lander_graphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lander_graphics.cpp; path = ../../lander_graphics.cpp; sourceTree = "<group>"; };
 		71994AAA28E0E447001E15B4 /* lander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lander.h; path = ../../lander.h; sourceTree = "<group>"; };
-		71994AAB28E0E447001E15B4 /* lander.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lander.cpp; path = ../../lander.cpp; sourceTree = "<group>"; };
+		71994AAB28E0E447001E15B4 /* lander.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; name = lander.cpp; path = ../../lander.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
