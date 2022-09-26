@@ -44,25 +44,26 @@ void numerical_dynamics (void)
   force = f_grav + f_thrust + f_drag;
   acc = force / object_mass;
   
-  // use Euler for first integration step and Verlet otherwise
-  if (simulation_time == 0.0){
-    // Euler Integrator
-    prev_position = position;
-    new_position = position + delta_t * velocity;
-    velocity = velocity + delta_t * acc;
-  }
-  else{
-    // Verlet Integrator
-    new_position = 2*position - prev_position + acc * delta_t* delta_t;
-    velocity = 1/(2*delta_t) * (new_position - prev_position);
-    // update previous position:
-    prev_position = position;
-  }
+//  // use Euler for first integration step and Verlet otherwise
+//  if (simulation_time == 0.0){
+//    // Euler Integrator
+//    prev_position = position;
+//    new_position = position + delta_t * velocity;
+//    velocity = velocity + delta_t * acc;
+//  }
+//  else{
+//    // Verlet Integrator
+//    new_position = 2*position - prev_position + acc * delta_t* delta_t;
+//    velocity = 1/(2*delta_t) * (new_position - prev_position);
+//    // update previous position:
+//    prev_position = position;
+//  }
+//  position = new_position;
+  // Euler only
+  new_position = position + delta_t * velocity;
+  velocity = velocity + delta_t * acc;
   position = new_position;
 
-
-  
-  
   // Here we can apply an autopilot to adjust the thrust, parachute and attitude
   if (autopilot_enabled) autopilot();
 
