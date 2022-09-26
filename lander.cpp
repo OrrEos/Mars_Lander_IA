@@ -18,58 +18,86 @@ void autopilot (void)
   // Autopilot to adjust the engine throttle, parachute and attitude control
 {
   // INSERT YOUR CODE HERE
-}
-
-void numerical_dynamics (void)
-  // This is the function that performs the numerical integration to update the
-  // lander's pose. The time step is delta_t (global variable).
-{
-  // INSERT YOUR CODE HERE
-  vector3d acc, force, f_grav, f_thrust, f_drag; // local acceleration variable
-  static vector3d prev_position, new_position;
-  double object_mass, density, frontal_area;
+  double K_h = 0.04;
+  double K_p = 0.7;
+  double h = position.abs() - MARS_RADIUS;  // altitude
+  double e = - (0.5 + K_h*h + velocity*position/position.abs());
+  double P_out = K_p * e;
+  double density = atmospheric_density(position);
+  double frontal_area = 3.14159 * LANDER_SIZE*LANDER_SIZE;
+  vector3d f_grav = - GRAVITY * MARS_MASS * (UNLOADED_LANDER_MASS + fuel*FUEL_DENSITY*FUEL_CAPACITY) * position / (position.abs()*position.abs()* position.abs());
+  vector3d f_drag;
   
-  density = atmospheric_density(position);
-  frontal_area = 3.14159 * LANDER_SIZE*LANDER_SIZE; //pi*r^2
-  object_mass = UNLOADED_LANDER_MASS + fuel*FUEL_DENSITY*FUEL_CAPACITY;
-  f_grav = - GRAVITY * MARS_MASS * (object_mass) * position / (position.abs()*position.abs()* position.abs());
-  f_thrust = thrust_wrt_world();
   if (parachute_status == NOT_DEPLOYED || parachute_status == LOST) { // either or
     f_drag = -velocity * 0.5 * density * (DRAG_COEF_LANDER)*frontal_area * (velocity.abs());
-}
+  }
   else {
     f_drag = -velocity * 0.5 * density * (DRAG_COEF_LANDER)*frontal_area * (velocity.abs())
-            - velocity * 0.5 * density * (DRAG_COEF_CHUTE) * 4 * frontal_area * (velocity.abs()); // I set parachute's frontal area to be four times that of the lander
-}
-  force = f_grav + f_thrust + f_drag;
-  acc = force / object_mass;
+    - velocity * 0.5 * density * (DRAG_COEF_CHUTE) * 4 * frontal_area * (velocity.abs());
+  }
+    double Delta = 0.7 * ((f_grav - f_drag).abs() / MAX_THRUST);
+    
+    if (P_out <= -Delta){
+      throttle = 0.0;
+    }
+    else if (-Delta < P_out < 1-Delta){
+      throttle = Delta + P_out;
+    }
+    else{
+      throttle = 1.0;
+    }
+    
+    
+    
+  }
   
-//  // use Euler for first integration step and Verlet otherwise
-//  if (simulation_time == 0.0){
-//    // Euler Integrator
-//    prev_position = position;
-//    new_position = position + delta_t * velocity;
-//    velocity = velocity + delta_t * acc;
-//  }
-//  else{
-//    // Verlet Integrator
-//    new_position = 2*position - prev_position + acc * delta_t* delta_t;
-//    velocity = 1/(2*delta_t) * (new_position - prev_position);
-//    // update previous position:
-//    prev_position = position;
-//  }
-//  position = new_position;
-  // Euler only
-  new_position = position + delta_t * velocity;
-  velocity = velocity + delta_t * acc;
-  position = new_position;
-
-  // Here we can apply an autopilot to adjust the thrust, parachute and attitude
-  if (autopilot_enabled) autopilot();
-
-  // Here we can apply 3-axis stabilization to ensure the base is always pointing downwards
-  if (stabilized_attitude) attitude_stabilization();
-}
+  void numerical_dynamics (void)
+  // This is the function that performs the numerical integration to update the
+  // lander's pose. The time step is delta_t (global variable).
+  {
+    // INSERT YOUR CODE HERE
+    vector3d acc, force, f_grav, f_thrust, f_drag; // local acceleration variable
+    static vector3d prev_position, new_position;
+    double object_mass, density, frontal_area;
+    
+    density = atmospheric_density(position);
+    frontal_area = 3.14159 * LANDER_SIZE*LANDER_SIZE; //pi*r^2
+    object_mass = UNLOADED_LANDER_MASS + fuel*FUEL_DENSITY*FUEL_CAPACITY;
+    f_grav = - GRAVITY * MARS_MASS * (object_mass) * position / (position.abs()*position.abs()* position.abs());
+    f_thrust = thrust_wrt_world();
+    if (parachute_status == NOT_DEPLOYED || parachute_status == LOST) { // either or
+      f_drag = -velocity * 0.5 * density * (DRAG_COEF_LANDER)*frontal_area * (velocity.abs());
+    }
+    else {
+      f_drag = -velocity * 0.5 * density * (DRAG_COEF_LANDER)*frontal_area * (velocity.abs())
+      - velocity * 0.5 * density * (DRAG_COEF_CHUTE) * 4 * frontal_area * (velocity.abs()); // I set parachute's frontal area to be four times that of the lander
+    }
+    force = f_grav + f_thrust + f_drag;
+    acc = force / object_mass;
+    
+    // use Euler for first integration step and Verlet otherwise
+    if (simulation_time == 0.0){
+      // Euler Integrator
+      prev_position = position;
+      new_position = position + delta_t * velocity;
+      velocity = velocity + delta_t * acc;
+    }
+    else{
+      // Verlet Integrator
+      new_position = 2*position - prev_position + acc * delta_t* delta_t;
+      velocity = 1/(2*delta_t) * (new_position - prev_position);
+      // update previous position:
+      prev_position = position;
+    }
+    position = new_position;
+    
+    
+    // Here we can apply an autopilot to adjust the thrust, parachute and attitude
+    if (autopilot_enabled) autopilot();
+    
+    // Here we can apply 3-axis stabilization to ensure the base is always pointing downwards
+    if (stabilized_attitude) attitude_stabilization();
+  }
 
 void initialize_simulation (void)
   // Lander pose initialization - selects one of 10 possible scenarios
